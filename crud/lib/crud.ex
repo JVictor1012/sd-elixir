@@ -50,34 +50,28 @@ defmodule Crud do
     loop(pontos)
   end
 
-  def atualizar(pontos) do
-    IO.puts "Digite as coordenadas x e y:"
-    entrada = IO.gets("") |> String.trim |> String.split(" ") |> Enum.map(&String.to_integer/1)
-    
-    case entrada do
-      [x, y] ->
-        if Map.has_key?(pontos, {x, y}) do
-          IO.puts "Digite as novas coordenadas:"
-          novas_coordenadas = IO.gets("") |> String.trim |> String.split(" ") |> Enum.map(&String.to_integer/1)
-          
-          case novas_coordenadas do
-            [novo_x, novo_y] ->
-              novo_pontos = Map.update(pontos, {x, y}, true, fn _ -> {novo_x, novo_y} end)
-              IO.puts "Ponto atualizado com sucesso!"
-              loop(novo_pontos)
-            _ ->
-              IO.puts "Entrada inválida. Tente novamente."
-              atualizar(pontos)
-          end
-        else
-          IO.puts "Ponto não encontrado. Tente novamente."
+def atualizar(pontos) do
+  IO.puts "Digite as coordenadas x e y do ponto a atualizar:"
+  entrada = IO.gets("") |> String.trim |> String.split(" ") |> Enum.map(&String.to_integer/1)
+
+  case entrada do
+    [x, y] ->
+      case Map.get(pontos, {x, y}) do
+        nil ->
+          IO.puts "Ponto não encontrado."
           atualizar(pontos)
-        end
-      _ ->
-        IO.puts "Entrada invalida"
-        atualizar(pontos)
-    end
+        _ ->
+          novas_coordenadas = IO.gets("") |> String.trim |> String.split(" ") |> Enum.map(&String.to_integer/1)
+          novo_pontos = Map.delete(pontos, {x, y})
+          novo_pontos = Map.put(novo_pontos, {hd(novas_coordenadas), hd(tl(novas_coordenadas))}, true)
+          IO.puts "Ponto atualizado com sucesso!"
+          loop(novo_pontos)
+      end
+    _ ->
+      IO.puts "Entrada inválida."
+      atualizar(pontos)
   end
+end
 
   def excluir(pontos) do
     IO.puts "Digite as coordenadas x e y:"
