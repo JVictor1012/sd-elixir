@@ -99,3 +99,5 @@ end
   end
 end
 
+Crud.principal()
+
